@@ -5,17 +5,45 @@ export default class Favourites extends Component {
     constructor(){
         super();
         this.state = {
-        movies:[]
+        movies:[],
+        genre:[],
+        currGenre:"All Genre"
         }
     }    
     async componentDidMount(){  
-        let res = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=c900eedb12db3475789baf86e1a105a7&language=en-US&page=${this.state.currPage}`);
-    console.log(res.data);
+        let ans = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=c900eedb12db3475789baf86e1a105a7&language=en-US&page=${this.state.currPage}`);
+        let genreId={ 28: "Action",
+        12: "Adventure",
+        16: "Animation",
+        35: "Comedy",
+        80: "Crime",
+        99: "Documentary",
+        18: "Drama",
+        10751: "Family",
+        14: "Fantasy",
+        36: "History",
+        27: "Horror",
+        10402: "Music",
+        9648: "Mystery",
+        10749: "Romance",
+        878: "Sci-Fi",
+        10770: "TV",
+        53: "Thriller",
+        10752: "War",
+        37: "Western",}
+    let genreArr=[];
+    ans.data.results.map((movieObj)=>{
+        if(!genreArr.includes(genreId[movieObj.genre_ids[0]])){
+            genreArr.push(genreId[movieObj.genre_ids[0]]);
+        }
+    });
+    genreArr.unshift("All Genre")
+    console.log(genreArr);
     this.setState({
-      movies:[...res.data.results]
-    })  
-    
-     }
+      movies: [...ans.data.results],
+      genre : [...genreArr]
+    });  
+    }
   render() {
     let genreId={ 28: "Action",
     12: "Adventure",
@@ -36,22 +64,23 @@ export default class Favourites extends Component {
     53: "Thriller",
     10752: "War",
     37: "Western",}
+
     return (
         <div class="row">
-        <div class="col-3" >
+        <div class="col-3 favourites-list" >
             
             <ul class="list-group">
-                <li class="list-group-item active">All Genere</li>
-                <li class="list-group-item">Fantasy</li>
-                <li class="list-group-item">Action</li>
-                <li class="list-group-item">Hrror</li>
-                
+                {this.state.genre.map((genre)=>(
+                    this.state.currGenre == genre ?
+                    <li class="list-group-item active">{genre}</li>:
+                <li class="list-group-item">{genre}</li>
+                ))}
             </ul>
             
         </div>
-        <div class="col-sm" >
+        <div class="col fovourites_table" >
             <div class="row">
-                <input type='text'className='col' placeholder='Search'></input>
+                <input type='text'className='col-5' placeholder='Search'></input>
                 <input type='Number'className='col' placeholder='5'></input>
             </div>
        <div class="row">
@@ -72,6 +101,9 @@ export default class Favourites extends Component {
                     <td>{genreId[movieObj.genre_ids[0]]}</td>
                     <td>{movieObj.popularity}</td>
                     <td>{movieObj.vote_average }</td>
+                    <td>
+                    <button className='btn btn-outline-danger'>Delete</button>
+                    </td>
                 </tr>
                     ))
                 }
