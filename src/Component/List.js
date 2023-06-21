@@ -11,6 +11,7 @@ export default class List extends Component {
       parr: [1],
       currPage:1,
       movies:[],
+      favM:[]// this will store the id of the movies added to favourites
     };
   }
   handleEnter=(id)=>{
@@ -54,6 +55,18 @@ export default class List extends Component {
       currPage:pageNum,
     },this.changeMovies);
   }
+  handleFavourites=(movieObj)=>{
+    let localStorageMovies=JSON.parse(localStorage.getItem("movies")) || [];
+    if(this.state.favM.includes(movieObj)){
+      localStorageMovies=localStorageMovies.filter(movie=>movie.id!=movieObj.id);
+    } 
+    else localStorageMovies.push(movieObj);
+    localStorage.setItem("movies",JSON.stringify(localStorageMovies));
+    let tempData=localStorageMovies.map(movieObj=>movieObj.id);
+    this.setState({
+      favM:[...tempData]
+    })
+  }
   async componentDidMount(){
     console.log("componentDIdMot");
     let res = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=c900eedb12db3475789baf86e1a105a7&language=en-US&page=${this.state.currPage}`);
@@ -90,7 +103,9 @@ export default class List extends Component {
             {/*<p className="card-text banner-textf ">Some quick example text to build on the card title and make up the bulk of the card's content.</p>*/}
             <div className="button-wrapper">
               {this.state.hover == movieObj.id && (
-              <a href="#" class="btn btn-primary movie-button">add to favourites</a>
+              <a href="#" class="btn btn-primary movie-button" onClick={()=>this.handleFavourites(movieObj)}>
+                add to favourites
+                </a>
               )}
            </div>
           </div>
