@@ -132,20 +132,22 @@ handleDelete=(id)=>{
            return moviesName.includes(this.state.CurrText);//[t,o,p, ,g,u,n, ,m,a,v,e,r,i,c,k]
         })
     }
-    if(this.state.currGenre!="All Genre"){
+    if(this.state.currGenre != "All Genre"){
         filtereMovies=filtereMovies.filter((movieObj) => genreId[movieObj.genre_ids[0]]==this.state.currGenre)
     }
-    else filtereMovies=this.state.movies;
+   // else filtereMovies=this.state.movies;
     return (
         <div class="row">
-        <div class="col-3 favourites-list" >
+        <div class="col-3 " >
             
             <ul class="list-group">
-                {this.state.genre.map((genre)=>(
-                    this.state.currGenre == genre ?
-                    <li class="list-group-item active" aria-current="true">{genre}</li>:
+                {this.state.genre.map((genre)=>
+                    this.state.currGenre == genre ?(
+                    <li class="list-group-item active" aria-current="true">{genre}</li>
+                    ):(
                 <li class="list-group-item" aria-current="true" onClick={()=>this.handleCurreGenre(genre)}>{genre}</li>
-                ))}
+                )
+                )}
             </ul>
             
         </div>
@@ -191,7 +193,6 @@ handleDelete=(id)=>{
            </table>
          </div>
         </div>
-          
       </div>
     )
   }
